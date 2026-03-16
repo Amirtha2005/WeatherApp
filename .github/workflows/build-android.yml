@@ -1,0 +1,34 @@
+name: Build Android APK
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Build environment'
+        required: true
+        default: 'SIT'
+      comment:
+        description: 'Build comment'
+        required: false
+        default: ''
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Simulate build
+        run: |
+          echo "Building APK for ${{ github.event.inputs.environment }}"
+          echo "Comment: ${{ github.event.inputs.comment }}"
+          sleep 10
+          echo "Build complete!"
+
+      - name: Create fake APK
+        run: |
+          mkdir -p app/build/outputs/apk
+          echo "fake apk content" > app/build/outputs/apk/app-release.apk
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: app-release
+          path: app/build/outputs/apk/app-release.apk
