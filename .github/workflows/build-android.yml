@@ -15,20 +15,28 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Simulate build
-        run: |
-          echo "Building APK for ${{ github.event.inputs.environment }}"
-          echo "Comment: ${{ github.event.inputs.comment }}"
-          sleep 10
-          echo "Build complete!"
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - name: Create fake APK
-        run: |
-          mkdir -p app/build/outputs/apk
-          echo "fake apk content" > app/build/outputs/apk/app-release.apk
-
-      - uses: actions/upload-artifact@v4
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
         with:
-          name: app-release
-          path: app/build/outputs/apk/app-release.apk
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Grant execute permission to gradlew
+        run: chmod +x gradlew
+
+      - name: Build Debug APK
+        run: ./gradlew assembleDebug
+        env:
+          ENVIRONMENT: ${{ github.event.inputs.environment }}
+          COMMENT: ${{ github.event.inputs.comment }}
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-debug-${{ github.event.inputs.environment }}
+          path: app/build/outputs/apk/debug/app-debug.apk
