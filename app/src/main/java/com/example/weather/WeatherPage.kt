@@ -37,6 +37,12 @@ import coil.compose.AsyncImage
 import com.example.weather.api.NetworkResponse
 import com.example.weather.api.WeatherModel
 
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+
+fun Modifier.testId(id: String): Modifier =
+    this.semantics { contentDescription = id }
+
 @Composable
 fun WeatherPage(padding: Modifier=Modifier, viewModel: WeatherViewModel) {
 
@@ -69,8 +75,9 @@ fun WeatherPage(padding: Modifier=Modifier, viewModel: WeatherViewModel) {
                 modifier = Modifier
                     .weight(1f)
                     .padding(end = 8.dp)
+                    .testId("input_search_city")
             )
-            IconButton(onClick = {viewModel.getData(city) }) {
+            IconButton(onClick = {viewModel.getData(city),modifier = Modifier.testId("btn_search_city")   }) {
                 Icon(imageVector = Icons.Default.Search,
                     contentDescription = "Search city")
             }
